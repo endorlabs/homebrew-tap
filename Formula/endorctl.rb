@@ -1,19 +1,20 @@
+
 class Endorctl < Formula
 
   desc "Endor Labs CLI"
 
   homepage "https://github.com/endorlabs/homebrew-tap"
 
-  version "v1.5.260"
+  version "v1.5.259"
 
   on_macos do
     on_arm do
       url "https://api.staging.endorlabs.com/download/endorlabs/#{version}/binaries/endorctl_#{version}_macos_arm64"
-      sha256 "c169052a595e5b4e0c6eabaa719371da19b3e7e1d6fb18a9b771f8d4e8a9a8bf"
+      sha256 "3b87c4d2472567cdb8afe781d88963b630d460cfdd456bd222172ffd02c47608"
     end
     on_intel do
       url "https://api.staging.endorlabs.com/download/endorlabs/#{version}/binaries/endorctl_#{version}_macos_amd64"
-      sha256 "0ef1ff4152cdede028017cda087b226c174631eaa966400f95aa66a924d1f50c"
+      sha256 "870748b1e8463d92374d5863e0daee9c0780d1890adfa294fc42af0e2b71ab40"
     end
   end
 
