@@ -1,38 +1,58 @@
+require 'net/http'
+
+class EndorDownloadStrategy < CurlDownloadStrategy
+  def url
+    versioned_url = $download_url
+    versioned_url
+  end
+end
 
 class Endorctl < Formula
 
-  desc "Endor Labs CLI"
-
   homepage "https://github.com/endorlabs/homebrew-tap"
+  desc "Endor Labs Homebrew Tap"
+  version "latest"
 
-  version "v1.5.259"
+  # Get latest version metadata
+  version_uri = URI("https://api.endorlabs.com/meta/version")
+  http = Net::HTTP.new(version_uri.host, version_uri.port)
+  http.use_ssl = true
+
+  req = Net::HTTP::Get.new(version_uri)
+  res = http.request(req)
+  if res.is_a?(Net::HTTPSuccess)
+    json_data = JSON.parse(res.body)
+    version = json_data["Service"]["Version"]
+    puts "Latest version: #{version}"
+  else
+    ohai "Failed to get version metadata"
+    exit 1
+  end
+
+  # Assume MacOS, ARM
+  use_arch = "arm64"
+  $download_sha = json_data["ClientChecksums"]["ARCH_TYPE_MACOS_ARM64"]
 
   on_macos do
-    on_arm do
-      url "https://api.staging.endorlabs.com/download/endorlabs/#{version}/binaries/endorctl_#{version}_macos_arm64"
-      sha256 "3b87c4d2472567cdb8afe781d88963b630d460cfdd456bd222172ffd02c47608"
-    end
     on_intel do
-      url "https://api.staging.endorlabs.com/download/endorlabs/#{version}/binaries/endorctl_#{version}_macos_amd64"
-      sha256 "870748b1e8463d92374d5863e0daee9c0780d1890adfa294fc42af0e2b71ab40"
+      use_arch = "amd64"
+      $download_sha = json_data["ClientChecksums"]["ARCH_TYPE_MACOS_AMD64"]
     end
   end
 
+  $endorctl_file = "endorctl_#{version}_macos_#{use_arch}"
+  $download_url = "https://api.endorlabs.com/download/endorlabs/#{version}/binaries/#{$endorctl_file}"
 
-  #license "MIT"
+  # Download and install
+  url "https://api.endorlabs.com/meta/version", :using => EndorDownloadStrategy
+  sha256 $download_sha
 
   def install
-    on_macos do
-      on_arm do
-        bin.install "endorctl_#{version}_macos_arm64" => "endorctl"
-      end
-      on_intel do
-        bin.install "endorctl_#{version}_macos_amd64" => "endorctl"
-      end
-    end
+     bin.install "#{$endorctl_file}" => "endorctl"
   end
 
   test do
     system "#{bin}/endorctl", "--version"
   end
+
 end
