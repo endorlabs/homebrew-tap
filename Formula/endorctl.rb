@@ -23,7 +23,6 @@ class Endorctl < Formula
   if res.is_a?(Net::HTTPSuccess)
     json_data = JSON.parse(res.body)
     version = json_data["Service"]["Version"]
-    puts "Latest version: #{version}"
   else
     ohai "Failed to get version metadata"
     exit 1
