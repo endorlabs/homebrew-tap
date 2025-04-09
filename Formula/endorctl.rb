@@ -10,7 +10,7 @@ class Endorctl < Formula
   livecheck do
     url ENDORCTL_VERSION_URL
     strategy :json do |json|
-      json["Service"]["Version"]
+      json["ClientVersion"]
     end
   end
 
@@ -30,7 +30,7 @@ class Endorctl < Formula
   end
 
   version_json = fetch_version_json
-  version version_json["Service"]["Version"]
+  version version_json["ClientVersion"]
 
   # Assume MacOS, ARM
   use_arch = "arm64"
