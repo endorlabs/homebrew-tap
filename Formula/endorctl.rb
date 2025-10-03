@@ -32,30 +32,17 @@ class Endorctl < Formula
   version_json = fetch_version_json
   version version_json["ClientVersion"]
 
-  # Assume MacOS, ARM
-  use_arch = "arm64"
-  $download_sha = version_json["ClientChecksums"]["ARCH_TYPE_MACOS_ARM64"]
+  arch     = Hardware::CPU.arm? ? "arm64" : "amd64"
+  platform = OS.mac? ? "macos" : "linux"
 
-  on_macos do
-    on_intel do
-      use_arch = "amd64"
-      $download_sha = version_json["ClientChecksums"]["ARCH_TYPE_MACOS_AMD64"]
-    end
-  end
-  
-  $endorctl_file = "endorctl_#{version}_macos_#{use_arch}"
-  $download_url = "https://api.endorlabs.com/download/endorlabs/#{version}/binaries/#{$endorctl_file}" 
-  
-  # Download properties
-  url $download_url
-  sha256 $download_sha
-  
+  url "https://api.endorlabs.com/download/endorlabs/#{version}/binaries/endorctl_#{version}_#{platform}_#{arch}"
+  sha256 version_json["ClientChecksums"]["ARCH_TYPE_#{platform.upcase}_#{arch.upcase}"]
+
   def install
-     bin.install "#{$endorctl_file}" => "endorctl"
+    bin.install "endorctl_#{version}_#{OS.mac? ? "macos" : "linux"}_#{Hardware::CPU.arm? ? "arm64" : "amd64"}" => "endorctl"
   end
 
   test do
     system "#{bin}/endorctl", "--version"
   end
-
 end
