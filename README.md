@@ -1,20 +1,18 @@
-# Endorctl Homebrew Tap
+# Endor Labs Homebrew Tap
 
-This repository contains a collection of Homebrew (aka, Brew) "formulae" for Endorctl
+This repository is the Homebrew (aka, Brew) Tap for Endor Labs.
 
-## Tap Endor Labs' repository
+It contains a single formula to install `endorctl`, the Endor Labs command line interface.
 
-```sh
-brew tap endorlabs/tap
-```
+## Formula: endorctl
 
-## Installing Endorctl
+### Installing endorctl
 
 ```sh
-brew install endorctl
+brew install endorlabs/tap/endorctl
 ```
 
-## Upgrading Endorctl
+### Upgrading endorctl
 
 ```sh
 brew upgrade endorctl
